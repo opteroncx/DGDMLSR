@@ -12,13 +12,14 @@ install these python packages:
 
 ## Data generation
 ### Use example image
-> step.1 use gen_patch.py to collect patches from the image and its depth map.
-> step.2 use gen_pkl.py to generate python pickle file to accelerate the dataloader.
+> Step.1 use get_image.py to collect NYU depth images and depth maps.   
+> Step.2 use depth_inv.py and gen_patch.py to collect patches from the image and its depth map.   
+> Step.3 use gen_pkl.py to generate python pickle file to accelerate the dataloader.   
 
 ### Use your own image
-> use a depth estimation model to obtain the depth map.
-> use inverse_depth to get the inversed depth
-> follow the example
+> use a depth estimation model to obtain the depth map.   
+> use inverse_depth to get the inversed depth   
+> follow the example   
 
 ## Training
 We train a specific model for each image.

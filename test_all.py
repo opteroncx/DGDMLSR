@@ -43,8 +43,8 @@ def sr(test_im_path,mpath,mname,opath):
     img = cv2.imread(test_im_path)
     name = os.path.split(test_im_path)[1]
     # print(name)
-    niqe = predict(img,save,convert,eva,name,mpath,mname,opath)
-    return niqe
+    predict(img,save,convert,eva,name,mpath,mname,opath)
+
 
 def predict(img_read,save,convert,eva,name,mpath,mname,opath):
     if convert:
@@ -82,48 +82,36 @@ def predict(img_read,save,convert,eva,name,mpath,mname,opath):
     im_h_y = HR_2x.data[0].numpy().astype(np.float32)
 
     im_h_y = ToImage(im_h_y)
-    # res = res.cpu().data[0].numpy().astype(np.float32)
-    # disp = ToImage(res)[0,:,:]
-    # disp = stack(disp)
-    # ui = ui.cpu().data[0].numpy().astype(np.float32)
-    # ui = ToImage(ui)[0,:,:]
-    # print('res=',disp.shape)
-    # Test NIQE
+
+    # Test NIQE ！！！！ This NIQE is not correct, don't use it. You should use matlab script instead
     # niqe = measure.niqe(im_h_y)[0]
     # print('NIQE=',niqe)
-    niqe=0
+
     if save:
         recon=convert_y_and_cbcr_to_rgb(im_h_y, gt_yuv[:, :, 1:3])
         save_figure(recon,mname,opath)
-        # save_figure(disp,'res_'+name)
-        # save_figure(ui,'uim_'+name)
     if eva:
         #PSNR and SSIM
         psnr_predicted = PSNR(im_gt_y, im_h_y,shave_border=opt.scale)
         ssim_predicted = pyssim.compute_ssim(im_gt_y, im_h_y)
         print("test psnr/ssim=%f/%f"%(psnr_predicted,ssim_predicted))
         return psnr_predicted,ssim_predicted
-    return niqe
+
 
 ##################################
 def main():
     opt.scale = 2
-    model_path = './Urban_models2/model_0/'
-    out_path = 'ub_down2_%dx/'%opt.scale
-    test_im_path = './data/ubimages/0.png'
+    model_path = './checkpoints/'
+    out_path = 'result_%dx/'%opt.scale
+    test_im_path = './test/15.jpg'
     models = os.listdir(model_path)
     opath = out_path
-    best_niqe = 10000
-    best_model = 0
+
     for i in range(1,len(models)):
         mpath = model_path+'biwgan_model_epoch_%d.pth'%i
         mname = 'epoch'+str(i)+'.png'
-        niqe = sr(test_im_path,mpath,mname,opath)
-        print('model=%d,niqe=%.5f'%(i,niqe))
-        if niqe < best_niqe:
-            best_niqe = niqe
-            best_model = i
-    print('best_model=%d,best_niqe=%.5f'%(best_model,best_niqe))
+        sr(test_im_path,mpath,mname,opath)
+
 
 if __name__ == "__main__":
     main()
